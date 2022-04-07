@@ -1,0 +1,15 @@
+https://www.youtube.com/watch?v=voAyroDb6xk&t=450
+
+winget install -e --id Kubernetes.minikube
+minikube start --cpus 6 --memory 8192
+istioctl install
+git clone https://github.com/GoogleCloudPlatform/microservices-demo.git
+kubectl label namespace default istio-injection=enabled
+kubectl apply -f .\microservices-demo\release\kubernetes-manifests.yaml
+
+
+
+kubectl apply -f .\istio-installation\istio-1.13.2\samples\addons
+kubectl describe pod adservice-75656d5f44-mjg65
+kubectl get pod -n istio-system
+kubectl port-forward svc/kiali -n istio-system 20001
