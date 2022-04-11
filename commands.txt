@@ -18,3 +18,6 @@ kubectl port-forward svc/kiali -n istio-system 20001
 kubectl port-forward svc/grafana -n istio-system 3000
 kubectl port-forward svc/prometheus -n istio-system 9090
 kubectl port-forward svc/tracing -n istio-system  80
+
+# port forwarding to ssh client
+ssh -L 80:10.98.35.53:80 michaelmente@swa-michaelmente.cs.univie.ac.at
