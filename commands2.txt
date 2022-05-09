@@ -59,4 +59,4 @@ start loadgen
 
 	locust --host="http://localhost:32503"
 	
-	locust --host=$GATEWAY_URL --headless -u 20
+	locust --host=http://$GATEWAY_URL -u 20 --headless
