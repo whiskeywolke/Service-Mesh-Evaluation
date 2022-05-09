@@ -36,6 +36,74 @@
             "mode": "absolute",
             "steps": [
               {
+                "color": "semi-dark-orange",
+                "value": null
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 90
+              },
+              {
+                "color": "#EAB839",
+                "value": 95
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 99
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "round(rate(istiod_uptime_seconds{namespace=\"istio-system\"}[1m]), 0.01) * 100",
+          "interval": "",
+          "legendFormat": "uptime percent",
+          "refId": "A"
+        }
+      ],
+      "title": "Uptime Percent",
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
                 "color": "green",
                 "value": null
               },
@@ -45,17 +113,17 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "reqps"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
+        "h": 7,
+        "w": 7,
+        "x": 7,
         "y": 0
       },
-      "id": 9,
+      "id": 13,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -78,23 +146,26 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "round(rate(istiod_uptime_seconds{namespace=\"istio-system\"}[1m]), 0.01) * 100",
+          "expr": "sum(rate(istio_requests_total{reporter=\"source\"}[1m]))",
+          "format": "time_series",
           "interval": "",
-          "legendFormat": "uptime percent",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Uptime Percent",
+      "title": "Panel Title",
       "type": "stat"
     },
     {
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 7
       },
-      "id": 7,
+      "id": 11,
+      "panels": [],
       "title": "Row title",
       "type": "row"
     },
@@ -153,7 +224,7 @@
         "h": 10,
         "w": 14,
         "x": 0,
-        "y": 9
+        "y": 8
       },
       "id": 4,
       "options": {
@@ -239,7 +310,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "percentunit"
         },
         "overrides": []
       },
@@ -247,7 +319,7 @@
         "h": 10,
         "w": 10,
         "x": 14,
-        "y": 9
+        "y": 8
       },
       "id": 5,
       "options": {
@@ -272,19 +344,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(rate(istio_requests_total{reporter=\"source\"}[1m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "total requests",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "exemplar": true,
-          "expr": "sum(rate(istio_requests_total{reporter=\"source\", response_code=~\"2.*\"}[1m]))",
+          "expr": "(sum(rate(istio_requests_total{reporter=\"source\", response_code=~\"2.*\"}[1m])) + sum(rate(istio_requests_total{reporter=\"source\", response_code=~\"3.*\"}[1m])))/sum(rate(istio_requests_total{reporter=\"source\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "successful requests",
@@ -296,7 +356,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(rate(istio_requests_total{reporter=\"source\", response_code=~\"5.*\"}[1m]))",
+          "expr": "sum(rate(istio_requests_total{reporter=\"source\", response_code=~\"5.*\"}[1m]))/sum(rate(istio_requests_total{reporter=\"source\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "failed requests (status 5xx)",
@@ -308,7 +368,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(rate(istio_requests_total{reporter=\"source\", response_code=~\"4.*\"}[1m]))",
+          "expr": "sum(rate(istio_requests_total{reporter=\"source\", response_code=~\"4.*\"}[1m]))/sum(rate(istio_requests_total{reporter=\"source\"}[1m]))",
           "hide": false,
           "interval": "",
           "legendFormat": "failed requests (status 4xx)",
@@ -373,7 +433,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 19
+        "y": 18
       },
       "id": 2,
       "options": {
@@ -430,6 +490,6 @@
   "timezone": "",
   "title": "requests per second",
   "uid": "EoPKJy_7k",
-  "version": 8,
+  "version": 12,
   "weekStart": ""
 }
