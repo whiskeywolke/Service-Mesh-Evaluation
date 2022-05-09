@@ -1,0 +1,53 @@
+setup minkube & install istio inside cluster (! latest istioversion must be installed otherwise it might lead to errors):
+
+	minikube start --cpus 14 --memory 28000 --driver=virtualbox
+	istioctl install
+	kubectl label namespace default istio-injection=enabled
+
+
+install addons for management:
+
+	kubectl apply -f samples/addons/grafana.yaml
+	kubectl apply -f samples/addons/prometheus.yaml
+	kubectl apply -f samples/addons/kiali.yaml
+
+	k get all -n istio-system
+	k get pod -n istio-system
+	
+	
+	kubectl port-forward svc/kiali -n istio-system 20001
+	kubectl port-forward svc/grafana -n istio-system 3000
+	kubectl port-forward svc/prometheus -n istio-system 9090
+
+
+deploy sample application :
+
+	kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+	kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -sS productpage:9080/productpage | grep -o "<title>.*</title>"
+
+	kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+
+
+	kubectl get gateway
+
+	minikube tunnel
+
+	export INGRESS_HOST=$(minikube ip)
+
+	export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+	export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}')
+	export TCP_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="tcp")].nodePort}')
+
+	export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+	echo $GATEWAY_URL
+
+	curl -s "http://${GATEWAY_URL}/productpage" | grep -o "<title>.*</title>"
+
+
+	kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
+
+	minikube ip
+	ssh -L 80:192.168.59.105:31325 michaelmente@swa-michaelmente.cs.univie.ac.at
+
+
