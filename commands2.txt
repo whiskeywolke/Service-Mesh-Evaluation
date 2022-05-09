@@ -57,4 +57,6 @@ deploy sample application :
 
 start loadgen
 
-	locust --host="http://localhost:32503/"
+	locust --host="http://localhost:32503"
+	
+	locust --host=$GATEWAY_URL --headless -u 20

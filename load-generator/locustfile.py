@@ -5,10 +5,10 @@ from locust import HttpUser, TaskSet, between
 
 
 def index(l):
-    l.client.get("productpage")
+    l.client.get("/productpage")
 
 def login(l):
-    l.client.post("login", {
+    l.client.post("/login", {
         'username': 'username',
         'passwd': 'password'})
 
