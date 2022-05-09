@@ -59,4 +59,6 @@ start loadgen
 
 	locust --host="http://localhost:32503"
 	
+	
+	ulimit -Sn 10000
 	locust --host=http://$GATEWAY_URL -u 20 --headless
