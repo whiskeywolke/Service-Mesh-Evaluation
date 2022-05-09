@@ -16,8 +16,12 @@ install addons for management:
 	
 	
 	kubectl port-forward svc/kiali -n istio-system 20001
-	kubectl port-forward svc/grafana -n istio-system 3000
+	kubectl port-forward svc/grafana -n istio-system 3000 
 	kubectl port-forward svc/prometheus -n istio-system 9090
+
+	ssh -L 20001:localhost:20001 michaelmente@swa-michaelmente.cs.univie.ac.at
+	ssh -L 3000:localhost:3000 michaelmente@swa-michaelmente.cs.univie.ac.at
+	ssh -L 9090:localhost:9090 michaelmente@swa-michaelmente.cs.univie.ac.at
 
 
 deploy sample application :
@@ -48,6 +52,9 @@ deploy sample application :
 	kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
 
 	minikube ip
-	ssh -L 80:192.168.59.105:31325 michaelmente@swa-michaelmente.cs.univie.ac.at
+	ssh -L 80:192.168.59.106:31325 michaelmente@swa-michaelmente.cs.univie.ac.at
 
 
+start loadgen
+
+	locust --host="http://localhost:32503/"
