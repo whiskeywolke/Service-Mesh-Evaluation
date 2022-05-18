@@ -63,3 +63,12 @@ start loadgen
 	ulimit -Sn 1048576
 	locust --host=http://$GATEWAY_URL -u 20 --headless
 	locust --host=http://$GATEWAY_URL -u 200  -L=CRITICAL --spawn-rate=20 --headless
+	
+	
+	locust --host=http://$GATEWAY_URL -u 400  -L=CRITICAL --spawn-rate=40 --headless
+	locust --host=http://$GATEWAY_URL -u 500  -L=CRITICAL --spawn-rate=50 --headless
+	locust --host=http://$GATEWAY_URL -u 750  -L=CRITICAL --spawn-rate=75 --headless
+	locust --host=http://$GATEWAY_URL -u 1000  -L=CRITICAL --spawn-rate=100 --headless
+
+	
+	
