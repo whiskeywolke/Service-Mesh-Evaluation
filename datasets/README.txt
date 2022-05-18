@@ -1,0 +1,1 @@
+u200s20 -> datasets from 200 users at a spawn rate of 20 (time range of 90 min) {locust --host=http://$GATEWAY_URL -u 200  -L=CRITICAL --spawn-rate=20 --headless}
