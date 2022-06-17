@@ -22,6 +22,8 @@ install addons for management:
 	ssh -L 20001:localhost:20001 michaelmente@swa-michaelmente.cs.univie.ac.at
 	ssh -L 3000:localhost:3000 michaelmente@swa-michaelmente.cs.univie.ac.at
 	ssh -L 9090:localhost:9090 michaelmente@swa-michaelmente.cs.univie.ac.at
+	
+	(https://linuxize.com/post/how-to-setup-ssh-tunneling/)
 
 
 deploy sample application :
@@ -69,6 +71,22 @@ start loadgen
 	locust --host=http://$GATEWAY_URL -u 500  -L=CRITICAL --spawn-rate=50 --headless
 	locust --host=http://$GATEWAY_URL -u 750  -L=CRITICAL --spawn-rate=75 --headless
 	locust --host=http://$GATEWAY_URL -u 1000  -L=CRITICAL --spawn-rate=100 --headless
+	
+	
+	
+Teastore:
+	kubectl create -f https://github.com/DescartesResearch/TeaStore/blob/master/examples/kubernetes/teastore-clusterip.yaml
+	kubectl delete pods,deployments,services -l app=teastore
+
+	curl $(minikube ip):30080/tools.descartes.teastore.webui/
+	
+	ssh -L 30080:192.168.59.106:30080 michaelmente@swa-michaelmente.cs.univie.ac.at
+
+#	ssh -L 8080:localhost:8080 michaelmente@swa-michaelmente.cs.univie.ac.at
+#	kubectl port-forward teastore-webui-7bcddb59d5-w2mz8 8080:8080
+#	curl localhost:8080/tools.descartes.teastore.webui/
+
+
 
 	
 	
