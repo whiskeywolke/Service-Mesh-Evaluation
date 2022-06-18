@@ -75,7 +75,7 @@ start loadgen
 	
 	
 Teastore:
-	kubectl create -f https://github.com/DescartesResearch/TeaStore/blob/master/examples/kubernetes/teastore-clusterip.yaml
+	kubectl create -f https://raw.githubusercontent.com/DescartesResearch/TeaStore/master/examples/kubernetes/teastore-clusterip.yaml
 	kubectl delete pods,deployments,services -l app=teastore
 
 	curl $(minikube ip):30080/tools.descartes.teastore.webui/
