@@ -78,8 +78,10 @@ start loadgen
 	locust --host=http://$GATEWAY_URL -u 1000  -L=CRITICAL --spawn-rate=100 --headless --run-time=300s
 	
 	
-
-
+	Benchmark
+	
+	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=300s --csv $(date "+%d-%m-%y_%H-%M-%S") --csv-full-history
+	
 	
 Teastore (microservice reference application): (very bad performance)
 	kubectl create -f https://raw.githubusercontent.com/DescartesResearch/TeaStore/master/examples/kubernetes/teastore-clusterip.yaml
