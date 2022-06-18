@@ -59,7 +59,7 @@ deploy sample application :
 	kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
 
 	minikube ip
-	ssh -L 80:192.168.59.106:31325 michaelmente@swa-michaelmente.cs.univie.ac.at
+	ssh -L 80:192.168.59.109:32460 michaelmente@swa-michaelmente.cs.univie.ac.at
 
 
 start loadgen
@@ -69,17 +69,19 @@ start loadgen
 	
 	ulimit -Sn 1048576
 	locust --host=http://$GATEWAY_URL -u 20 --headless
-	locust --host=http://$GATEWAY_URL -u 200  -L=CRITICAL --spawn-rate=20 --headless
+	locust --host=http://$GATEWAY_URL -u 200  -L=CRITICAL --spawn-rate=20 --headless --run-time=300s
 	
 	
-	locust --host=http://$GATEWAY_URL -u 400  -L=CRITICAL --spawn-rate=40 --headless
-	locust --host=http://$GATEWAY_URL -u 500  -L=CRITICAL --spawn-rate=50 --headless
-	locust --host=http://$GATEWAY_URL -u 750  -L=CRITICAL --spawn-rate=75 --headless
-	locust --host=http://$GATEWAY_URL -u 1000  -L=CRITICAL --spawn-rate=100 --headless
+	locust --host=http://$GATEWAY_URL -u 400  -L=CRITICAL --spawn-rate=40 --headless --run-time=300s
+	locust --host=http://$GATEWAY_URL -u 500  -L=CRITICAL --spawn-rate=50 --headless --run-time=300s
+	locust --host=http://$GATEWAY_URL -u 750  -L=CRITICAL --spawn-rate=75 --headless --run-time=300s
+	locust --host=http://$GATEWAY_URL -u 1000  -L=CRITICAL --spawn-rate=100 --headless --run-time=300s
 	
 	
+
+
 	
-Teastore (microservice reference application):
+Teastore (microservice reference application): (very bad performance)
 	kubectl create -f https://raw.githubusercontent.com/DescartesResearch/TeaStore/master/examples/kubernetes/teastore-clusterip.yaml
 	kubectl create -f teastore.yaml
 	kubectl apply -f teastore.yaml

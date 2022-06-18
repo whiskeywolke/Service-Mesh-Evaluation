@@ -16,8 +16,10 @@ class UserBehavior(TaskSet):
     def on_start(self):
         index(self)
 
-    tasks = {index: 10,
-            login: 2}
+    tasks = {
+        index: 5,
+#        login: 2,
+    }
 
 class WebsiteUser(HttpUser):
     tasks = [UserBehavior]
