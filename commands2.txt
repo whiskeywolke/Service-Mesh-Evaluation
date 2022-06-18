@@ -30,6 +30,7 @@ install addons for management:
 	(https://linuxize.com/post/how-to-setup-ssh-tunneling/)
 
 
+Bookinfo (istio sample application):
 deploy sample application :
 
 	kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
@@ -78,7 +79,7 @@ start loadgen
 	
 	
 	
-Teastore:
+Teastore (microservice reference application):
 	kubectl create -f https://raw.githubusercontent.com/DescartesResearch/TeaStore/master/examples/kubernetes/teastore-clusterip.yaml
 	kubectl create -f teastore.yaml
 	kubectl apply -f teastore.yaml
