@@ -4,6 +4,10 @@ setup minkube & install istio inside cluster (! latest istioversion must be inst
 	istioctl install
 	kubectl label namespace default istio-injection=enabled
 
+	minikube dashboard --url
+	ssh -L 38619:localhost:38619 michaelmente@swa-michaelmente.cs.univie.ac.at
+	http://localhost:38619/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
 
 install addons for management:
 
@@ -14,14 +18,14 @@ install addons for management:
 	k get all -n istio-system
 	k get pod -n istio-system
 	
-	
-	kubectl port-forward svc/kiali -n istio-system 20001
-	kubectl port-forward svc/grafana -n istio-system 3000 
-	kubectl port-forward svc/prometheus -n istio-system 9090
-
 	ssh -L 20001:localhost:20001 michaelmente@swa-michaelmente.cs.univie.ac.at
+	kubectl port-forward svc/kiali -n istio-system 20001
+
 	ssh -L 3000:localhost:3000 michaelmente@swa-michaelmente.cs.univie.ac.at
+	kubectl port-forward svc/grafana -n istio-system 3000 
+	
 	ssh -L 9090:localhost:9090 michaelmente@swa-michaelmente.cs.univie.ac.at
+	kubectl port-forward svc/prometheus -n istio-system 9090
 	
 	(https://linuxize.com/post/how-to-setup-ssh-tunneling/)
 
@@ -76,14 +80,25 @@ start loadgen
 	
 Teastore:
 	kubectl create -f https://raw.githubusercontent.com/DescartesResearch/TeaStore/master/examples/kubernetes/teastore-clusterip.yaml
+	kubectl create -f teastore.yaml
+	kubectl apply -f teastore.yaml
 	kubectl delete pods,deployments,services -l app=teastore
 
 	curl $(minikube ip):30080/tools.descartes.teastore.webui/
+
+
+	kkubectl port-forward svc/teastore-webui 8080
+	curl localhost:8080/tools.descartes.teastore.webui/
 	
-	ssh -L 30080:192.168.59.106:30080 michaelmente@swa-michaelmente.cs.univie.ac.at
+	ssh -L 30080:192.168.59.109:30080 michaelmente@swa-michaelmente.cs.univie.ac.at
 
 
-	java -jar httploadgenerator.jar director -s $(minikube ip) -a ./increasingLowIntensity.csv -l ./teastore_browse.lua -o MYOUTPUTFILENAME.csv -t 256
+	ssh -L 8080:localhost:8080 michaelmente@swa-michaelmente.cs.univie.ac.at
+	k port-forward teastore-webui-0 8080:8080
+
+
+	java -jar httploadgenerator.jar loadgenerator
+	java -jar httploadgenerator.jar director -s localhost -a ./increasingLowIntensity.csv -l ./teastore_browse.lua -o MYOUTPUTFILENAME.csv -t 256
 
 #	ssh -L 8080:localhost:8080 michaelmente@swa-michaelmente.cs.univie.ac.at
 #	kubectl port-forward teastore-webui-7bcddb59d5-w2mz8 8080:8080
