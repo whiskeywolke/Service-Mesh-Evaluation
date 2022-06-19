@@ -1,4 +1,0 @@
-Method,Name,Error,Occurrences
-POST,/login,503 Server Error: Service Unavailable for url: http://192.168.59.106:32503/login,72
-GET,/productpage,503 Server Error: Service Unavailable for url: http://192.168.59.106:32503/productpage,771
-POST,/login,404 Client Error: Not Found for url: http://192.168.59.106:32503/None,33155
