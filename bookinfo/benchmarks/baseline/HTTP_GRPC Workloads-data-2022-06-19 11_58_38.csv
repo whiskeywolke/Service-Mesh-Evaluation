@@ -1,0 +1,8 @@
+﻿"Time","destination_service","destination_workload","destination_workload_namespace","destination_workload_var","Value #A"
+2022-06-19 11:44:00.000,productpage.default.svc.cluster.local,productpage-v1,default,productpage-v1.default,0
+2022-06-19 11:44:00.000,details.default.svc.cluster.local,details-v1,default,details-v1.default,0
+2022-06-19 11:44:00.000,reviews.default.svc.cluster.local,reviews-v1,default,reviews-v1.default,0
+2022-06-19 11:44:00.000,reviews.default.svc.cluster.local,reviews-v2,default,reviews-v2.default,0
+2022-06-19 11:44:00.000,reviews.default.svc.cluster.local,reviews-v3,default,reviews-v3.default,0
+2022-06-19 11:44:00.000,ratings.default.svc.cluster.local,ratings-v1,default,ratings-v1.default,0
+
