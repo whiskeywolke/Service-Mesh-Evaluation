@@ -85,9 +85,9 @@ start loadgen
 	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=20s
 
 Benchmark
-	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=300s --csv $(date "+%d-%m-%y_%H-%M-%S") --csv-full-history
+	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv $(date "+%d-%m-%y_%H-%M-%S") --csv-full-history
 	
-	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=20s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 	
 	
 Teastore (microservice reference application): (very bad performance)
@@ -99,7 +99,7 @@ Teastore (microservice reference application): (very bad performance)
 	curl $(minikube ip):30080/tools.descartes.teastore.webui/
 
 
-	kkubectl port-forward svc/teastore-webui 8080
+	kubectl port-forward svc/teastore-webui 8080
 	curl localhost:8080/tools.descartes.teastore.webui/
 	
 	ssh -L 30080:192.168.59.109:30080 michaelmente@swa-michaelmente.cs.univie.ac.at
