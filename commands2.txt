@@ -1,3 +1,8 @@
+ssh michaelmente@swa-michaelmente.cs.univie.ac.at
+ssh michaelmente@swa-michaelmente-vdesktop.cs.univie.ac.at
+
+
+
 setup minkube & install istio inside cluster (! latest istioversion must be installed otherwise it might lead to errors):
 
 	minikube start --cpus 14 --memory 28000 --driver=virtualbox
@@ -56,6 +61,10 @@ deploy sample application :
 	export INGRESS_HOST=$(minikube ip) && export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}') && export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT && echo $GATEWAY_URL
 	
 
+	sudo ufw allow $INGRESS_PORT/tcp
+
+
+
 	curl -s "http://${GATEWAY_URL}/productpage" | grep -o "<title>.*</title>"
 
 
@@ -63,6 +72,15 @@ deploy sample application :
 
 	minikube ip
 	ssh -L 80:192.168.59.109:32460 michaelmente@swa-michaelmente.cs.univie.ac.at
+
+
+forwarding minikube to outside world:
+	
+	vboxmanage controlvm minikube natpf1 delete "http"
+	vboxmanage controlvm "minikube" natpf1 "http,tcp,,32460,,32460"
+
+	curl -s "http://localhost:32460/productpage" | grep -o "<title>.*</title>"
+	curl -s "http://swa-michaelmente.cs.univie.ac.at:32460/productpage" | grep -o "<title>.*</title>"
 
 
 start loadgen
