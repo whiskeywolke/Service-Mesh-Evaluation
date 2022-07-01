@@ -77,11 +77,25 @@ deploy sample application :
 forwarding minikube to outside world: (https://cwienczek.com/2017/09/reaching-minikube-from-other-devices/)
 	
 	vboxmanage controlvm minikube natpf1 delete "http"
+	vboxmanage showvminfo minikube | grep NIC
+	
 	vboxmanage controlvm "minikube" natpf1 "http,tcp,,32460,,32460"
 
 	curl -s "http://localhost:32460/productpage" | grep -o "<title>.*</title>"
 	curl -s "http://swa-michaelmente.cs.univie.ac.at:32460/productpage" | grep -o "<title>.*</title>"
+	
+	
+	
+----	
+	kubectl expose deployment productpage-v1 --type=NodePort --name=ingress-bypass
+	kubectl get svc ingress-bypass
+	vboxmanage controlvm "minikube" natpf1 "http1,tcp,,32726,,32726"
 
+
+	curl -s "http://localhost:32726/productpage" | grep -o "<title>.*</title>"
+	curl -s "http://swa-michaelmente.cs.univie.ac.at:32726/productpage" | grep -o "<title>.*</title>"
+
+----
 
 start loadgen
 
@@ -108,7 +122,10 @@ Benchmark
 use this one:	
 	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 
+
+benchvmark v2:
 	locust --host=http://swa-michaelmente.cs.univie.ac.at:32460 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/noIngressGateway/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 
 	
 	
