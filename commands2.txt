@@ -74,7 +74,7 @@ deploy sample application :
 	ssh -L 80:192.168.59.109:32460 michaelmente@swa-michaelmente.cs.univie.ac.at
 
 
-forwarding minikube to outside world:
+forwarding minikube to outside world: (https://cwienczek.com/2017/09/reaching-minikube-from-other-devices/)
 	
 	vboxmanage controlvm minikube natpf1 delete "http"
 	vboxmanage controlvm "minikube" natpf1 "http,tcp,,32460,,32460"
@@ -104,8 +104,12 @@ start loadgen
 
 Benchmark
 	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv $(date "+%d-%m-%y_%H-%M-%S") --csv-full-history
-	
+
+use this one:	
 	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32460 -u 200 --spawn-rate=40 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+
 	
 	
 Teastore (microservice reference application): (very bad performance)
