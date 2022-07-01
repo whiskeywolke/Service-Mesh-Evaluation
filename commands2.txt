@@ -108,7 +108,7 @@ Benchmark
 use this one:	
 	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 
-	locust --host=http://swa-michaelmente.cs.univie.ac.at:32460 -u 200 --spawn-rate=40 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32460 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 
 	
 	
