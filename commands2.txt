@@ -96,6 +96,10 @@ forwarding minikube to outside world: (https://cwienczek.com/2017/09/reaching-mi
 	curl -s "http://swa-michaelmente.cs.univie.ac.at:32726/productpage" | grep -o "<title>.*</title>"
 
 ----
+	
+	k delete -f bookinfo-gateway.yaml
+
+
 
 start loadgen
 
@@ -126,6 +130,7 @@ use this one:
 benchvmark v2:
 	locust --host=http://swa-michaelmente.cs.univie.ac.at:32460 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/noIngressGateway/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/noLoadBalancing/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 
 	
 	
