@@ -138,6 +138,7 @@ benchvmark v2:
 	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 1500 --spawn-rate=100 --headless --run-time=600s --csv benchmarks/noIngressGatewayHigh/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 1500 --spawn-rate=100 --headless --run-time=600s --csv benchmarks/noLoadBalancingHigh/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 1500 --spawn-rate=100 --headless --run-time=600s --csv benchmarks/noIstio/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
 	
 	
 Teastore (microservice reference application): (very bad performance)
