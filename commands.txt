@@ -1,23 +1,183 @@
-https://www.youtube.com/watch?v=voAyroDb6xk&t=450
+ssh michaelmente@swa-michaelmente.cs.univie.ac.at
+ssh michaelmente@swa-michaelmente-vdesktop.cs.univie.ac.at
 
-winget install -e --id Kubernetes.minikube
-minikube start --cpus 6 --memory 8192
-istioctl install
-git clone https://github.com/GoogleCloudPlatform/microservices-demo.git
-kubectl label namespace default istio-injection=enabled
-kubectl apply -f .\microservices-demo\release\kubernetes-manifests.yaml
 
-kubectl get all
-kubectl get all -n istio-system
 
-kubectl apply -f .\istio-installation\istio-1.13.2\samples\addons
-kubectl describe pod adservice-75656d5f44-mjg65
-kubectl get pod -n istio-system
-kubectl get svc -n istio-system
-kubectl port-forward svc/kiali -n istio-system 20001
-kubectl port-forward svc/grafana -n istio-system 3000
-kubectl port-forward svc/prometheus -n istio-system 9090
-kubectl port-forward svc/tracing -n istio-system  80
+setup minikube & install istio inside cluster (! latest istioversion must be installed otherwise it might lead to errors):
 
-# port forwarding to ssh client
-ssh -L 80:10.98.35.53:80 michaelmente@swa-michaelmente.cs.univie.ac.at
+	minikube start --cpus 14 --memory 28000 --driver=virtualbox
+	istioctl install
+	kubectl label namespace default istio-injection=enabled
+
+	minikube dashboard --url
+	ssh -L 38619:localhost:38619 michaelmente@swa-michaelmente.cs.univie.ac.at
+	http://localhost:38619/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
+
+install addons for management:
+
+	kubectl apply -f samples/addons/grafana.yaml
+	kubectl apply -f samples/addons/prometheus.yaml
+	kubectl apply -f samples/addons/kiali.yaml
+
+	k get all -n istio-system
+	k get pod -n istio-system
+	
+	ssh -L 20001:localhost:20001 michaelmente@swa-michaelmente.cs.univie.ac.at
+	kubectl port-forward svc/kiali -n istio-system 20001
+
+	ssh -L 3000:localhost:3000 michaelmente@swa-michaelmente.cs.univie.ac.at
+	kubectl port-forward svc/grafana -n istio-system 3000 
+	
+	ssh -L 9090:localhost:9090 michaelmente@swa-michaelmente.cs.univie.ac.at
+	kubectl port-forward svc/prometheus -n istio-system 9090
+	
+	(https://linuxize.com/post/how-to-setup-ssh-tunneling/)
+
+
+Bookinfo (istio sample application):
+deploy sample application :
+
+	kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+	kubectl exec "$(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}')" -c ratings -- curl -sS productpage:9080/productpage | grep -o "<title>.*</title>"
+
+	kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+
+
+	kubectl get gateway
+
+	minikube tunnel
+
+	export INGRESS_HOST=$(minikube ip)
+
+	export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+	export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}')
+	export TCP_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="tcp")].nodePort}')
+
+	export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
+	echo $GATEWAY_URL
+	
+	export INGRESS_HOST=$(minikube ip) && export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}') && export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT && echo $GATEWAY_URL
+	
+
+	sudo ufw allow $INGRESS_PORT/tcp
+
+
+
+	curl -s "http://${GATEWAY_URL}/productpage" | grep -o "<title>.*</title>"
+
+
+	kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
+
+	minikube ip
+	ssh -L 80:192.168.59.109:32460 michaelmente@swa-michaelmente.cs.univie.ac.at
+
+
+forwarding minikube to outside world: (https://cwienczek.com/2017/09/reaching-minikube-from-other-devices/)
+	
+	vboxmanage controlvm minikube natpf1 delete "http"
+	vboxmanage showvminfo minikube | grep NIC
+	
+	vboxmanage controlvm "minikube" natpf1 "http,tcp,,32460,,32460"
+
+	curl -s "http://localhost:32460/productpage" | grep -o "<title>.*</title>"
+	curl -s "http://swa-michaelmente.cs.univie.ac.at:32460/productpage" | grep -o "<title>.*</title>"
+
+	curl -s "http://localhost:$INGRESS_PORT/productpage" | grep -o "<title>.*</title>"
+	curl -s "http://swa-michaelmente.cs.univie.ac.at:$INGRESS_PORT/productpage" | grep -o "<title>.*</title>"
+	
+	
+	
+----	
+	kubectl expose deployment productpage-v1 --type=NodePort --name=ingress-bypass
+	kubectl get svc ingress-bypass
+	vboxmanage controlvm "minikube" natpf1 "http1,tcp,,32726,,32726"
+
+
+	curl -s "http://localhost:32726/productpage" | grep -o "<title>.*</title>"
+	curl -s "http://swa-michaelmente.cs.univie.ac.at:32726/productpage" | grep -o "<title>.*</title>"
+	
+	
+	export INGRESS_BYPASS=$(kubectl get service ingress-bypass -o jsonpath='{.spec.ports[0].nodePort}')
+	vboxmanage controlvm "minikube" natpf1 "ingress-bypass,tcp,,$INGRESS_BYPASS,,$INGRESS_BYPASS"
+	
+	curl -s "http://swa-michaelmente.cs.univie.ac.at:$INGRESS_BYPASS/productpage" | grep -o "<title>.*</title>"
+
+
+----
+	
+	k delete -f bookinfo-gateway.yaml
+	curl -s "http://swa-michaelmente.cs.univie.ac.at:32726/productpage" | grep -o "<title>.*</title>"
+
+
+
+start loadgen
+
+	locust --host="http://localhost:32503"
+	
+	
+	ulimit -Sn 1048576
+	locust --host=http://$GATEWAY_URL -u 20 --headless
+	locust --host=http://$GATEWAY_URL -u 200  -L=CRITICAL --spawn-rate=20 --headless --run-time=300s
+	
+	
+	locust --host=http://$GATEWAY_URL -u 400  -L=CRITICAL --spawn-rate=40 --headless --run-time=300s
+	locust --host=http://$GATEWAY_URL -u 500  -L=CRITICAL --spawn-rate=50 --headless --run-time=300s
+	locust --host=http://$GATEWAY_URL -u 750  -L=CRITICAL --spawn-rate=75 --headless --run-time=300s
+	locust --host=http://$GATEWAY_URL -u 1000  -L=CRITICAL --spawn-rate=100 --headless --run-time=300s
+	
+	
+	test benchmark
+	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=20s
+
+Benchmark
+	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv $(date "+%d-%m-%y_%H-%M-%S") --csv-full-history
+
+use this one:	
+	locust --host=http://$GATEWAY_URL -u 200 --spawn-rate=40 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+
+
+benchvmark v2:
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32460 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/baseline/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/noIngressGateway/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 400 --spawn-rate=80 --headless --run-time=600s --csv benchmarks/noLoadBalancing/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+
+	
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32460 -u 1500 --spawn-rate=100 --headless --run-time=600s --csv benchmarks/baselineHigh/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 1500 --spawn-rate=100 --headless --run-time=600s --csv benchmarks/noIngressGatewayHigh/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 1500 --spawn-rate=100 --headless --run-time=600s --csv benchmarks/noLoadBalancingHigh/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+
+	locust --host=http://swa-michaelmente.cs.univie.ac.at:32726 -u 1500 --spawn-rate=100 --headless --run-time=600s --csv benchmarks/noIstio/$(date "+%d-%m-%y_%H-%M-%S") --csv-full-history -f load-generator/locustfile.py
+	
+	
+Teastore (microservice reference application): (very bad performance)
+	kubectl create -f https://raw.githubusercontent.com/DescartesResearch/TeaStore/master/examples/kubernetes/teastore-clusterip.yaml
+	kubectl create -f teastore.yaml
+	kubectl apply -f teastore.yaml
+	kubectl delete pods,deployments,services -l app=teastore
+
+	curl $(minikube ip):30080/tools.descartes.teastore.webui/
+
+
+	kubectl port-forward svc/teastore-webui 8080
+	curl localhost:8080/tools.descartes.teastore.webui/
+	
+	ssh -L 30080:192.168.59.109:30080 michaelmente@swa-michaelmente.cs.univie.ac.at
+
+
+	ssh -L 8080:localhost:8080 michaelmente@swa-michaelmente.cs.univie.ac.at
+	k port-forward teastore-webui-0 8080:8080
+
+
+	java -jar httploadgenerator.jar loadgenerator
+	java -jar httploadgenerator.jar director -s localhost -a ./increasingLowIntensity.csv -l ./teastore_browse.lua -o MYOUTPUTFILENAME.csv -t 256
+
+#	ssh -L 8080:localhost:8080 michaelmente@swa-michaelmente.cs.univie.ac.at
+#	kubectl port-forward teastore-webui-7bcddb59d5-w2mz8 8080:8080
+#	curl localhost:8080/tools.descartes.teastore.webui/
+
+
+
+	
+	
