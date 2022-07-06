@@ -1,4 +1,4 @@
-# This Repository holds the content of the work I done for P1
+# This Repository holds the content of the work I have done for P1
 
 ## Description of folders & Files
 - bookinfo
