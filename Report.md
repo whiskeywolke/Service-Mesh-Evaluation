@@ -50,7 +50,7 @@ A detailed analysis of the data can be found at: https://github.com/whiskeywolke
 
 ## How-to
 This section lists the commands I used to install and setup Istio, as well as configuring the benchmarks for the chosen Microservice application for reproducibility
-An extended version of this list of commands can be found at https://github.com/whiskeywolke/P1-SS22/blob/main/commands2.txt
+An extended version of this list of commands can be found at https://github.com/whiskeywolke/P1-SS22/blob/main/commands.txt
 
 ### Setup Minikube & install Istio inside cluster
 ```bash
