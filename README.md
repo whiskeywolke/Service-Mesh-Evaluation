@@ -12,7 +12,7 @@
 	this folder holds various files which do not contribute to the final outcome but provided interesting insights on which I based my decisions
 - teastore
 	this folder holds the neccessary files for deployment of the teastore reference application as well as the custom load generator
-- Report.md
+- project_overview.md
 	A brief summary of the work I have done and how I approached different interesting topics during the semester
 - Report.pdf
-	A PDF representation of the rendered Report.md	
+	A detailed Report giving background information as well explanation of measurement results as well as a future outlook	
