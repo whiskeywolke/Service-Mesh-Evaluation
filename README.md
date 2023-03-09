@@ -22,5 +22,5 @@ You can find the report here [Report.pdf](Report.pdf).
 	this folder holds the neccessary files for deployment of the teastore reference application as well as the custom load generator
 - project_overview.md :
 	A brief summary of the work I have done and how I approached different interesting topics during the semester
-- Report.pdf :
+- [Report.pdf](Report.pdf) :
 	A detailed Report giving background information as well explanation of measurement results as well as a future outlook	
