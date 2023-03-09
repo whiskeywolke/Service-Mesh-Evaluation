@@ -1,4 +1,12 @@
-# This Repository holds the content of the work I have done for P1
+# Service Mesh Evaluation
+
+## This Repository holds the content of the work I have done for the P1 Project "Service Meshes like Istio"
+
+In this project I evaluated the impact of service meshes on the overall performance by utilizing Prometheus and Grafana on Kubernetes Clusters. 
+To achieve this I have tested multiple microservice applications and visualized the results with custom Grafana dashboards.
+
+You can find the report here [Report.pdf](Report.pdf).
+
 
 ## Description of folders & Files
 - bookinfo :
